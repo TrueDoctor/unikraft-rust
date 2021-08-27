@@ -1,5 +1,4 @@
 #![no_std]
-#![feature(lang_items)]
 
 use core::panic::PanicInfo;
 
@@ -12,13 +11,8 @@ extern "C" {
     pub fn printf(format: *const u8, ...) -> i32;
 }
 
-#[cfg(not(test))]
 #[panic_handler]
-fn panic_handler(_fmt: &PanicInfo<'_>) -> ! {
+fn panic(_panic: &PanicInfo<'_>) -> ! {
     unsafe { printf("Rust panic\0\n".as_ptr()) };
     loop {}
 }
-
-#[cfg(not(test))]
-#[lang = "eh_personality"]
-extern "C" fn eh_personality() {}

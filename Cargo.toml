@@ -12,3 +12,9 @@ crate-type = ["staticlib"]
 
 [build-dependencies]
 cbindgen = "0.12"
+
+[profile.dev]
+panic = "abort"
+
+[profile.release]
+panic = "abort"
