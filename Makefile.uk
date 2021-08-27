@@ -1,0 +1,10 @@
+$(eval $(call addlib,apprust))
+
+APPRUST_SRCS-y += $(APPRUST_BASE)/main.c
+
+APPRUST_ALIBS-y += $(APPRUST_BASE)/target/debug/librust.a
+
+$(APPRUST_BUILD)/.prepared:
+	cargo build
+
+UK_PREPARE += $(APPRUST_BUILD)/.prepared
