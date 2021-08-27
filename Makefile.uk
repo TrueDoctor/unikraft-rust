@@ -8,3 +8,5 @@ $(APPRUST_BUILD)/.prepared:
 	cargo build
 
 UK_PREPARE += $(APPRUST_BUILD)/.prepared
+
+APPRUST_SRCS-y += $(APPRUST_BASE)/extra.ld
