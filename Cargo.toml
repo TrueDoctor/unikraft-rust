@@ -2,13 +2,14 @@
 name = "rust"
 version = "0.1.0"
 edition = "2018"
-author = "TrueDoctor"
+authors = ["Dennis Kobert"]
 
 [lib]
 name = "rust"
 crate-type = ["staticlib"]
 
 [dependencies]
+linked_list_allocator = "0.9"
 
 [build-dependencies]
 cbindgen = "0.12"

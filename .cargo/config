@@ -1,0 +1,13 @@
+[unstable]
+build-std = ["alloc", "std", "proc_macro", "panic_abort"]
+#build-std-features = ["compiler-builtins-mem"]
+
+[build]
+target = "x86_64-uk.json"
+#rustflags = ["-Clink-arg=-r"]
+
+#[target.'cfg(all(target_os = "none", feature = "testing_qemu"))']
+#runner = "./run -test -serial"
+
+#[target.'cfg(all(target_os = "none", not(feature = "testing_qemu")))']
+#runner = "./run -test"
