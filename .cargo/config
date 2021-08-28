@@ -1,11 +1,8 @@
 [unstable]
-build-std = ["alloc", "core", "proc_macro", "panic_abort"]
-#build-std-features = ["compiler-builtins-mem"]
+build-std = ["alloc", "std", "panic_abort"]
+build-std-features = ["compiler-builtins-mangled-names"]
 
 [build]
 #target = "x86_64-uk.json"
 target = "linux.json"
 rustflags = ["-Ctarget-feature=-crt-static"]
-
-[target.'cfg(target_os = "unknown"']
-runner = "make && kraft run -m 1024"

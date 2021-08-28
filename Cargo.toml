@@ -12,6 +12,11 @@ crate-type = ["staticlib"]
 wee_alloc = {version="0.4", features = ["static_array_backend"]}
 libc = "0.2"
 
+#[dependencies.compiler_builtins]
+#git = "https://github.com/rust-lang/compiler-builtins"
+#default_features = false
+#features = ["mangled-names", "rustc-dep-of-std"]
+
 [build-dependencies]
 cbindgen = "0.12"
 
