@@ -6,10 +6,10 @@
   "dynamic-linking": false,
   "env": "gnu",
   "executables": false,
-  "has-elf-tls": true,
   "has-rpath": true,
-  "llvm-target": "x86_64-unknown-linux-gnu",
+  "llvm-target": "x86_64-unknown-musl",
   "max-atomic-width": 64,
+  "panic_strategy": "abort",
   "os": "linux",
   "position-independent-executables": true,
   "pre-link-args": {
