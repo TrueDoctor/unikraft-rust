@@ -1,6 +1,5 @@
 /target
 /build
 .config.old
-rust.h
 Cargo.lock
 .gdb_history
