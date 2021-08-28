@@ -16,11 +16,5 @@
   "stack-probes": {
     "kind": "call"
   },
-  "supported-sanitizers": [
-    "address",
-    "leak",
-    "memory",
-    "thread"
-  ],
   "target-pointer-width": "64"
 }

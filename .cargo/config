@@ -6,8 +6,5 @@ build-std = ["alloc", "std", "proc_macro", "panic_abort"]
 target = "x86_64-uk.json"
 #rustflags = ["-Clink-arg=-r"]
 
-#[target.'cfg(all(target_os = "none", feature = "testing_qemu"))']
-#runner = "./run -test -serial"
-
-#[target.'cfg(all(target_os = "none", not(feature = "testing_qemu")))']
-#runner = "./run -test"
+[target.'cfg(target_os = "unknown"']
+runner = "make && kraft run -m 1024"

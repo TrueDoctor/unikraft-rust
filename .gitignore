@@ -1,6 +1,5 @@
 /target
 /build
-.config
 .config.old
 rust.h
 Cargo.lock
