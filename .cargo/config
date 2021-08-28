@@ -3,8 +3,9 @@ build-std = ["alloc", "std", "proc_macro", "panic_abort"]
 #build-std-features = ["compiler-builtins-mem"]
 
 [build]
-target = "x86_64-uk.json"
-#rustflags = ["-Clink-arg=-r"]
+#target = "x86_64-uk.json"
+target = "linux.json"
+rustflags = ["-Ctarget-feature=-crt-static"]
 
 [target.'cfg(target_os = "unknown"']
 runner = "make && kraft run -m 1024"

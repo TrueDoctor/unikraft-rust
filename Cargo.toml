@@ -9,8 +9,8 @@ name = "rust"
 crate-type = ["staticlib"]
 
 [dependencies]
-linked_list_allocator = "0.9"
 wee_alloc = {version="0.4", features = ["static_array_backend"]}
+libc = "0.2"
 
 [build-dependencies]
 cbindgen = "0.12"
