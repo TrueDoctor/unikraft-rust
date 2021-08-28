@@ -3,6 +3,5 @@ build-std = ["alloc", "std", "panic_abort"]
 build-std-features = ["compiler-builtins-mangled-names"]
 
 [build]
-#target = "x86_64-uk.json"
-target = "linux.json"
+target = "linux-unikraft.json"
 rustflags = ["-Ctarget-feature=-crt-static"]

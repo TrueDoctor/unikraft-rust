@@ -1,10 +1,8 @@
 $(eval $(call addlib,apprust))
 
 APPRUST_SRCS-y += $(APPRUST_BASE)/main.c
-APPRUST_SRCS-y += $(APPRUST_BASE)/glue.c
 
-
-APPRUST_ALIBS-y += $(APPRUST_BASE)/target/linux/debug/librust.a
+APPRUST_ALIBS-y += $(APPRUST_BASE)/target/linux-unikraft/debug/librust.a
 
 $(APPRUST_BUILD)/.prepared:
 	cargo build

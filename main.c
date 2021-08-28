@@ -1,6 +1,6 @@
 #include "rust.h"
 
 int main(void) {
-  hello_rust();
+  rust_start();
   return 0;
 }
