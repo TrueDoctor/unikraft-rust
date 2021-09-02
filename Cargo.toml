@@ -9,3 +9,4 @@ name = "rust"
 crate-type = ["staticlib"]
 
 [dependencies]
+#libc = {path="libc"}#, features=["rustc-dep-of-std"]}

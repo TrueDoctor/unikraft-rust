@@ -4,4 +4,5 @@ build-std-features = ["compiler-builtins-mangled-names"]
 
 [build]
 target = "linux-unikraft.json"
-rustflags = ["-Ctarget-feature=-crt-static"]
+#target = "x86_64-unknown-linux-gnu"
+rustflags = ["-Ctarget-feature=+crt-static"]
