@@ -13,6 +13,6 @@ LIBRUSTFS_ALIBS-y += $(LIBRUSTFS_TARGET)/librustfs.a
 .PHONY: RUST_SOURCE
 
 $(LIBRUSTFS_TARGET)/librustfs.a: RUST_SOURCE
-	cd $(LIBRUSTFS_BASE) && cargo build
+	cd $(LIBRUSTFS_BASE) && cargo +nightly build
 
 UK_PREPARE += $(LIBRUSTFS_TARGET)/librustfs.a
