@@ -1,12 +1,18 @@
-$(eval $(call addlib,apprust))
+$(eval $(call addlib_s,librustfs,$(CONFIG_LIBRUSTFS)))
 
-APPRUST_SRCS-y += $(APPRUST_BASE)/main.c
+LIBRUSTFS_CFLAGS-$(call gcc_version_ge,8,0) += -Wno-cast-function-type
 
-APPRUST_ALIBS-y += $(APPRUST_BASE)/target/debug/librust.a
+LIBRUSTFS_SRCS-y += $(LIBRUSTFS_BASE)/rustfs_vfsops.c
+LIBRUSTFS_SRCS-y += $(LIBRUSTFS_BASE)/rustfs_vnops.c
+LIBRUSTFS_SRCS-y += $(LIBRUSTFS_BASE)/extra.ld
 
-$(APPRUST_BUILD)/.prepared:
-	cargo build
+LIBRUSTFS_TARGET = $(LIBRUSTFS_BASE)/target/x86_64-unknown-redox/debug
 
-UK_PREPARE += $(APPRUST_BUILD)/.prepared
+LIBRUSTFS_ALIBS-y += $(LIBRUSTFS_TARGET)/librustfs.a
 
-APPRUST_SRCS-y += $(APPRUST_BASE)/extra.ld
+.PHONY: RUST_SOURCE
+
+$(LIBRUSTFS_TARGET)/librustfs.a: RUST_SOURCE
+	cd $(LIBRUSTFS_BASE) && cargo build
+
+UK_PREPARE += $(LIBRUSTFS_TARGET)/librustfs.a

@@ -1,4 +1,11 @@
 #![no_std]
+#![feature(alloc_error_handler)]
+
+pub mod api;
+pub mod fs;
+
+#[global_allocator]
+static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
 use core::panic::PanicInfo;
 
@@ -14,5 +21,10 @@ extern "C" {
 #[panic_handler]
 fn panic(_panic: &PanicInfo<'_>) -> ! {
     unsafe { printf("Rust panic\0\n".as_ptr()) };
+    loop {}
+}
+
+#[alloc_error_handler]
+fn alloc_error(_layout: core::alloc::Layout) -> ! {
     loop {}
 }
