@@ -26,10 +26,10 @@ impl Node {
     pub fn lookup(&self, path: &str) -> Option<&Node> {
         let (file, suffix) = path.split_once('/').unwrap_or(("", path));
         if file.is_empty() && !suffix.is_empty() {
-            return Some(&self);
+            return Some(self);
         }
         match &self {
-            Node::Vnode(v) => None,
+            Node::Vnode(_) => None,
             Node::Directory(vec) => vec
                 .iter()
                 .find(|(name, _)| name == file)
@@ -73,11 +73,3 @@ impl Node {
         }
     }
 }
-/*
-read
-write
-
-lookup
-create
-remove
-*/

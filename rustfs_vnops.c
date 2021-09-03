@@ -59,62 +59,6 @@ static struct uk_mutex rustfs_lock = UK_MUTEX_INITIALIZER(rustfs_lock);
 static uint64_t inode_count = 1; /* inode 0 is reserved to root */
 extern struct uk_list_head rustfs_head;
 
-struct rustfs_node *
-rustfs_allocate_node(const char *name)
-{
-	struct rustfs_node *np = NULL;
-
-	// TODO 6: Allocate memory for np	
-
-	// TODO 7: Allocate memory for name inside np
-	// and copy the given name
-
-	return np;
-}
-
-void
-rustfs_free_node(struct rustfs_node *np)
-{
-	free(np->rn_buf);
-
-	free(np->rn_name);
-	free(np);
-}
-
-static struct rustfs_node *
-rustfs_add_node(struct rustfs_node *dnp __unused, char *name)
-{
-
-	struct rustfs_node *np = NULL;
-
-	// TODO 8: Allocate a node
-
-	uk_mutex_lock(&rustfs_lock);
-
-	// TODO 9: Add it to the list
-
-	uk_mutex_unlock(&rustfs_lock);
-
-	return np;
-}
-
-static int
-rustfs_remove_node(struct rustfs_node *dnp __unused, struct rustfs_node *np)
-{
-	struct uk_list_head *pos, *tmp;
-	struct rustfs_node *entry;
-	int found = 0;
-
-	uk_mutex_lock(&rustfs_lock);
-
-	// TODO 10: Search the np in the list and delete it
-
-	uk_mutex_unlock(&rustfs_lock);
-	return 0;
-}
-
-
-
 static int
 rustfs_shim_lookup(struct vnode *dvp, char *name, struct vnode **vpp)
 {
@@ -137,8 +81,9 @@ rustfs_shim_lookup(struct vnode *dvp, char *name, struct vnode **vpp)
 	found = 0;
 
 	// TODO 11: Search in the list the entry with the given name
+    found = rustfs_lookup(vpp, name);
 
-	if (found == 0) {
+	if (found == -1) {
 		uk_mutex_unlock(&rustfs_lock);
 		return ENOENT;
 	}
@@ -155,7 +100,6 @@ rustfs_shim_lookup(struct vnode *dvp, char *name, struct vnode **vpp)
 		return ENOMEM;
 	}
 
-    int res = rustfs_lookup(vpp, name);
 
 	// TODO 12: vp is a vnode, np is a rustfs_node
 	// we need to link these toghether
@@ -167,7 +111,7 @@ rustfs_shim_lookup(struct vnode *dvp, char *name, struct vnode **vpp)
 
 	//*vpp = vp;
 
-	return res;
+	return 0;
 }
 
 
@@ -231,7 +175,7 @@ rustfs_shim_read(struct vnode *vp, struct vfscore_file *fp __unused,
 static int
 rustfs_shim_write(struct vnode *vp, struct uio *uio, int ioflag)
 {
-	struct rustfs_node *np =  vp->v_data;
+	void *np =  vp->v_data;
 
 	if (uio->uio_offset < 0)
 		return EINVAL;
@@ -240,8 +184,9 @@ rustfs_shim_write(struct vnode *vp, struct uio *uio, int ioflag)
 	if (uio->uio_resid == 0)
 		return 0;
 
-	if (ioflag & IO_APPEND)
-		uio->uio_offset = np->rn_size;
+	//if (ioflag & IO_APPEND)
+	//	uio->uio_offset = np->rn_size;
+    //TODO: add append support
 
 	/*if ((size_t) uio->uio_offset + uio->uio_resid > (size_t) vp->v_size) {
 
