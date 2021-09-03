@@ -5,7 +5,7 @@ use alloc::{borrow::ToOwned, string::String, vec::Vec};
 
 #[derive(Default)]
 pub struct RustNode {
-    data: Vec<u8>,
+    pub data: Vec<u8>,
 }
 
 pub enum Node {
@@ -23,27 +23,27 @@ impl RustNode {
 }
 
 impl Node {
-    pub fn lookup(&self, path: &str) -> Option<&Node> {
-        let (file, suffix) = path.split_once('/').unwrap_or(("", path));
-        if file.is_empty() && !suffix.is_empty() {
-            return Some(self);
-        }
+    pub fn lookup(&self, path: &str) -> Option<&RustNode> {
+        let (file, suffix) = path.split_once('/').unwrap_or((path, ""));
         match &self {
-            Node::Vnode(_) => None,
             Node::Directory(vec) => vec
                 .iter()
                 .find(|(name, _)| name == file)
                 .and_then(|(_, node)| node.lookup(suffix)),
+            Node::Vnode(v) => Some(v),
         }
     }
-    pub fn create(&mut self, path: &str) -> Option<&Node> {
+    pub fn create(&mut self, path: &str) -> Option<&RustNode> {
         let (file, suffix) = path.split_once('/').unwrap_or(("", path));
         match self {
             Node::Vnode(_) => None,
             Node::Directory(vec) => {
                 if file.is_empty() && !suffix.is_empty() {
                     vec.push((suffix.to_owned(), Node::Vnode(RustNode::default())));
-                    vec.last().map(|(_, node)| node)
+                    match vec.last() {
+                        Some((_, Node::Vnode(rn))) => Some(rn),
+                        _ => None,
+                    }
                 } else {
                     vec.iter_mut()
                         .find(|(name, _)| name == file)
@@ -52,12 +52,15 @@ impl Node {
             }
         }
     }
-    pub fn remove(&mut self, to_remove: &Node) -> Option<Node> {
+    pub fn remove(&mut self, to_remove: &RustNode) -> Option<Node> {
         match self {
             Node::Vnode(_) => None,
             Node::Directory(vec) => {
-                let pos = vec.iter().position(|(_, node)| {
-                    core::ptr::eq(to_remove as *const Node, node as *const Node)
+                let pos = vec.iter().position(|(_, node)| match node {
+                    Node::Vnode(v) => {
+                        core::ptr::eq(to_remove as *const RustNode, v as *const RustNode)
+                    }
+                    _ => false,
                 });
                 if let Some(pos) = pos {
                     Some(vec.swap_remove(pos).1)

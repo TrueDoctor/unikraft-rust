@@ -66,6 +66,7 @@ rustfs_shim_lookup(struct vnode *dvp, char *name, struct vnode **vpp)
 	struct vnode *vp;
 	size_t len;
 	int found;
+    int size;
 	struct uk_list_head *pos;
 
 
@@ -81,7 +82,7 @@ rustfs_shim_lookup(struct vnode *dvp, char *name, struct vnode **vpp)
 	found = 0;
 
 	// TODO 11: Search in the list the entry with the given name
-    found = rustfs_lookup(vpp, name);
+    found = rustfs_lookup(&np, name, &size);
 
 	if (found == -1) {
 		uk_mutex_unlock(&rustfs_lock);
@@ -101,6 +102,8 @@ rustfs_shim_lookup(struct vnode *dvp, char *name, struct vnode **vpp)
 	}
 
 
+    vp->v_data = np;
+    vp->v_size = size;
 	// TODO 12: vp is a vnode, np is a rustfs_node
 	// we need to link these toghether
 	// we also need to provide the permisions
@@ -109,7 +112,7 @@ rustfs_shim_lookup(struct vnode *dvp, char *name, struct vnode **vpp)
 
 	uk_mutex_unlock(&rustfs_lock);
 
-	//*vpp = vp;
+	*vpp = vp;
 
 	return 0;
 }

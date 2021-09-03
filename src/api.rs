@@ -1,4 +1,4 @@
-use crate::fs::Node;
+use crate::fs::{Node, RustNode};
 extern crate alloc;
 use alloc::vec;
 
@@ -38,7 +38,7 @@ pub extern "C" fn rustfs_unmount() -> i32 {
 }
 
 #[no_mangle]
-pub extern "C" fn rustfs_create(ptr: &mut &Node, path: *const u8) -> i32 {
+pub extern "C" fn rustfs_create(ptr: &mut &RustNode, path: *const u8) -> i32 {
     let path = cs_to_slice(path);
     match fs!().create(path) {
         None => -1,
@@ -50,7 +50,7 @@ pub extern "C" fn rustfs_create(ptr: &mut &Node, path: *const u8) -> i32 {
 }
 
 #[no_mangle]
-pub extern "C" fn rustfs_remove(ptr: &Node) -> i32 {
+pub extern "C" fn rustfs_remove(ptr: &RustNode) -> i32 {
     match fs!().remove(ptr) {
         Some(_) => 0,
         _ => -1,
@@ -58,11 +58,12 @@ pub extern "C" fn rustfs_remove(ptr: &Node) -> i32 {
 }
 
 #[no_mangle]
-pub extern "C" fn rustfs_lookup(ptr: &mut &Node, path: *const u8) -> i32 {
+pub extern "C" fn rustfs_lookup(ptr: &mut &RustNode, path: *const u8, size: &mut i32) -> i32 {
     let path = cs_to_slice(path);
     match fs!().lookup(path) {
         Some(vnode) => {
             *ptr = vnode;
+            *size = vnode.data.len() as i32;
             0
         }
         _ => -1,
@@ -70,25 +71,19 @@ pub extern "C" fn rustfs_lookup(ptr: &mut &Node, path: *const u8) -> i32 {
 }
 
 #[no_mangle]
-pub extern "C" fn rustfs_read(node: &Node, uio: &mut UIO) -> i32 {
-    match node {
-        Node::Vnode(vn) => {
-            unsafe { *uio.uio_iov = IOVec::from_slice(vn.read()) };
-            0
-        }
-        _ => -1,
+pub extern "C" fn rustfs_read(node: &RustNode, uio: &mut UIO) -> i32 {
+    let slice = node.read();
+    let vec = unsafe { (*uio.uio_iov).as_slice_mut() };
+    for (a, b) in vec.iter_mut().zip(slice.iter()) {
+        *a = *b
     }
+    vec.len() as i32
 }
 
 #[no_mangle]
-pub extern "C" fn rustfs_write(node: &mut Node, uio: &mut UIO) -> i32 {
-    match node {
-        Node::Vnode(vn) => {
-            vn.write(uio);
-            0
-        }
-        _ => -1,
-    }
+pub extern "C" fn rustfs_write(node: &mut RustNode, uio: &mut UIO) -> i32 {
+    node.write(uio);
+    0
 }
 /*
 #[repr(C)]
@@ -119,7 +114,10 @@ impl IOVec {
     fn as_slice(&self) -> &[u8] {
         unsafe { core::slice::from_raw_parts(self.base, self.len) }
     }
-    fn from_slice(data: &[u8]) -> Self {
+    fn as_slice_mut(&mut self) -> &mut [u8] {
+        unsafe { core::slice::from_raw_parts_mut(self.base as *mut u8, self.len) }
+    }
+    pub fn from_slice(data: &[u8]) -> Self {
         Self {
             base: data.as_ptr(),
             len: data.len(),
